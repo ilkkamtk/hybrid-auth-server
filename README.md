@@ -1,1 +1,1 @@
-# SSSF-auth-server-starter
+# Hybridisovellukset autentikointiserveri
