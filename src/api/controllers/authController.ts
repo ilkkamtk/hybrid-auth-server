@@ -4,7 +4,7 @@ import {NextFunction, Request, Response} from 'express';
 import CustomError from '../../classes/CustomError';
 import {LoginResponse} from '../../types/MessageTypes';
 import {getUserByUsername} from '../models/userModel';
-import {LoginUser} from '../../types/DBTypes';
+import {LoginUser, TokenContent} from '../../types/DBTypes';
 import {validationResult} from 'express-validator';
 
 const login = async (
@@ -50,10 +50,12 @@ const login = async (
       level_name: user.level_name,
     };
 
-    const token = jwt.sign(
-      {id: user.user_id, role: user.level_name},
-      process.env.JWT_SECRET
-    );
+    const tokenContent: TokenContent = {
+      user_id: user.user_id,
+      level_name: user.level_name,
+    };
+
+    const token = jwt.sign(tokenContent, process.env.JWT_SECRET);
 
     const message: LoginResponse = {
       message: 'Login successful',

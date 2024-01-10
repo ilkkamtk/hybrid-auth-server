@@ -49,7 +49,7 @@ const authenticate = async (
       process.env.JWT_SECRET as string
     ) as TokenContent;
 
-    const user = await getUserById(userFromToken.id);
+    const user = await getUserById(userFromToken.user_id);
 
     if (!user) {
       next(new CustomError('Token not valid', 403));
