@@ -3,7 +3,7 @@
 import {NextFunction, Request, Response} from 'express';
 import CustomError from '../../classes/CustomError';
 import bcrypt from 'bcryptjs';
-import DBMessageResponse from '../../interfaces/DBMessageResponse';
+import {UserResponse} from '../../types/MessageTypes';
 import {
   createUser,
   deleteUser,
@@ -65,7 +65,7 @@ const userGet = async (
 
 const userPost = async (
   req: Request<{}, {}, User>,
-  res: Response<DBMessageResponse>,
+  res: Response<UserResponse>,
   next: NextFunction
 ) => {
   const errors = validationResult(req);
@@ -91,7 +91,7 @@ const userPost = async (
       next(new CustomError('User not created', 500));
       return;
     }
-    const response: DBMessageResponse = {
+    const response: UserResponse = {
       message: 'user created',
       user: newUser,
     };
@@ -103,7 +103,7 @@ const userPost = async (
 
 const userPut = async (
   req: Request<{}, {}, User>,
-  res: Response<DBMessageResponse, {user: LoginUser}>,
+  res: Response<UserResponse, {user: LoginUser}>,
   next: NextFunction
 ) => {
   const errors = validationResult(req);
@@ -136,7 +136,7 @@ const userPut = async (
 
     console.log('put result', result);
 
-    const response: DBMessageResponse = {
+    const response: UserResponse = {
       message: 'user updated',
       user: result,
     };
@@ -148,7 +148,7 @@ const userPut = async (
 
 const userDelete = async (
   req: Request,
-  res: Response<DBMessageResponse, {user: LoginUser}>,
+  res: Response<UserResponse, {user: LoginUser}>,
   next: NextFunction
 ) => {
   try {
@@ -170,7 +170,7 @@ const userDelete = async (
 
 const userPutAsAdmin = async (
   req: Request<{id: string}, {}, User>,
-  res: Response<DBMessageResponse, {user: LoginUser}>,
+  res: Response<UserResponse, {user: LoginUser}>,
   next: NextFunction
 ) => {
   const errors = validationResult(req);
@@ -201,7 +201,7 @@ const userPutAsAdmin = async (
       return;
     }
 
-    const response: DBMessageResponse = {
+    const response: UserResponse = {
       message: 'user updated',
       user: result,
     };
@@ -213,7 +213,7 @@ const userPutAsAdmin = async (
 
 const userDeleteAsAdmin = async (
   req: Request<{id: string}>,
-  res: Response<DBMessageResponse, {user: LoginUser}>,
+  res: Response<UserResponse, {user: LoginUser}>,
   next: NextFunction
 ) => {
   const errors = validationResult(req);
@@ -248,11 +248,11 @@ const userDeleteAsAdmin = async (
 
 const checkToken = async (
   req: Request,
-  res: Response<DBMessageResponse, {user: LoginUser}>
+  res: Response<UserResponse, {user: LoginUser}>
 ) => {
   const userFromToken = res.locals.user;
 
-  const message: DBMessageResponse = {
+  const message: UserResponse = {
     message: 'Token is valid',
     user: userFromToken,
   };

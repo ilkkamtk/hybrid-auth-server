@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {NextFunction, Request, Response} from 'express';
-import ErrorResponse from './interfaces/ErrorResponse';
+import {ErrorResponse} from './types/MessageTypes';
 import CustomError from './classes/CustomError';
 import jwt from 'jsonwebtoken';
 import {getUserById} from './api/models/userModel';

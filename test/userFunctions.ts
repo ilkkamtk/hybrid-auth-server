@@ -2,9 +2,11 @@
 import {Express} from 'express';
 import request from 'supertest';
 import {LoginUser} from '../src/types/DBTypes';
-import DBMessageResponse from '../src/interfaces/DBMessageResponse';
-import LoginMessageResponse from '../src/interfaces/LoginMessageResponse';
-import MessageResponse from '../src/interfaces/MessageResponse';
+import {
+  UserResponse,
+  LoginResponse,
+  MessageResponse,
+} from '../src/types/MessageTypes';
 
 const createUser = (
   url: string | Express,
@@ -19,7 +21,7 @@ const createUser = (
         if (err) {
           reject(err);
         } else {
-          const result: DBMessageResponse = response.body;
+          const result: UserResponse = response.body;
           expect(result).toHaveProperty('message');
           expect(result).toHaveProperty('user');
           if (!result.user) {
@@ -120,7 +122,7 @@ const login = (
         if (err) {
           reject(err);
         } else {
-          const result: LoginMessageResponse = response.body;
+          const result: LoginResponse = response.body;
           expect(result).toHaveProperty('message');
           expect(result).toHaveProperty('user');
           expect(result).toHaveProperty('token');
@@ -154,7 +156,7 @@ const modifyUser = (
         if (err) {
           reject(err);
         } else {
-          const result: DBMessageResponse = response.body;
+          const result: UserResponse = response.body;
           expect(result).toHaveProperty('message');
           expect(result).toHaveProperty('user');
           if (!result.user) {
@@ -181,7 +183,7 @@ const deleteUser = (url: string | Express, path: string, token: string) => {
         if (err) {
           reject(err);
         } else {
-          const result: DBMessageResponse = response.body;
+          const result: UserResponse = response.body;
           expect(result).toHaveProperty('message');
           expect(result).toHaveProperty('user');
           const userData = result.user as LoginUser;

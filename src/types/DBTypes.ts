@@ -17,7 +17,7 @@ type LoginUser = Omit<User, 'user_level_id'> & Pick<UserLevel, 'level_name'>;
 
 type TokenContent = {
   id: number;
-  role: 'user' | 'admin';
+  role: 'User' | 'Admin' | 'Guest';
 };
 
 export {UserLevel, User, LoginUser, TokenContent};

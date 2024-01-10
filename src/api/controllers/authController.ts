@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import {NextFunction, Request, Response} from 'express';
 import CustomError from '../../classes/CustomError';
-import LoginMessageResponse from '../../interfaces/LoginMessageResponse';
+import {LoginResponse} from '../../types/MessageTypes';
 import {getUserByUsername} from '../models/userModel';
 import {LoginUser} from '../../types/DBTypes';
 import {validationResult} from 'express-validator';
@@ -55,7 +55,7 @@ const login = async (
       process.env.JWT_SECRET
     );
 
-    const message: LoginMessageResponse = {
+    const message: LoginResponse = {
       message: 'Login successful',
       token,
       user: outUser,

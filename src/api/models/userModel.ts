@@ -1,7 +1,7 @@
 import {ResultSetHeader, RowDataPacket} from 'mysql2';
 import {promisePool} from '../../utils/db';
 import {LoginUser, User} from '../../types/DBTypes';
-import DBMessageResponse from '../../interfaces/DBMessageResponse';
+import {UserResponse} from '../../types/MessageTypes';
 
 const getUserById = async (id: number): Promise<LoginUser | null> => {
   try {
@@ -165,7 +165,7 @@ const modifyUser = async (
   }
 };
 
-const deleteUser = async (id: number): Promise<DBMessageResponse | null> => {
+const deleteUser = async (id: number): Promise<UserResponse | null> => {
   const connection = await promisePool.getConnection();
   try {
     await connection.beginTransaction();
