@@ -13,7 +13,7 @@ import {
   getUserByUsername,
   modifyUser,
 } from '../models/userModel';
-import {LoginUser, User} from '../../types/DBTypes';
+import {LoginUser, TokenContent, User} from '../../types/DBTypes';
 import {validationResult} from 'express-validator';
 
 const salt = bcrypt.genSaltSync(12);
@@ -103,7 +103,7 @@ const userPost = async (
 
 const userPut = async (
   req: Request<{}, {}, User>,
-  res: Response<UserResponse, {user: LoginUser}>,
+  res: Response<UserResponse, {user: TokenContent}>,
   next: NextFunction
 ) => {
   const errors = validationResult(req);
@@ -148,7 +148,7 @@ const userPut = async (
 
 const userDelete = async (
   req: Request,
-  res: Response<UserResponse, {user: LoginUser}>,
+  res: Response<UserResponse, {user: TokenContent}>,
   next: NextFunction
 ) => {
   try {
@@ -170,7 +170,7 @@ const userDelete = async (
 
 const userPutAsAdmin = async (
   req: Request<{id: string}, {}, User>,
-  res: Response<UserResponse, {user: LoginUser}>,
+  res: Response<UserResponse, {user: TokenContent}>,
   next: NextFunction
 ) => {
   const errors = validationResult(req);
@@ -213,7 +213,7 @@ const userPutAsAdmin = async (
 
 const userDeleteAsAdmin = async (
   req: Request<{id: string}>,
-  res: Response<UserResponse, {user: LoginUser}>,
+  res: Response<UserResponse, {user: TokenContent}>,
   next: NextFunction
 ) => {
   const errors = validationResult(req);
@@ -248,7 +248,7 @@ const userDeleteAsAdmin = async (
 
 const checkToken = async (
   req: Request,
-  res: Response<UserResponse, {user: LoginUser}>
+  res: Response<UserResponse, {user: TokenContent}>
 ) => {
   const userFromToken = res.locals.user;
 

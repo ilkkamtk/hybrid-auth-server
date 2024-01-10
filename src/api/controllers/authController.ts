@@ -9,7 +9,7 @@ import {validationResult} from 'express-validator';
 
 const login = async (
   req: Request<{}, {}, {username: string; password: string}>,
-  res: Response,
+  res: Response<LoginResponse>,
   next: NextFunction
 ) => {
   const errors = validationResult(req);
