@@ -1,4 +1,4 @@
-import {LoginUser} from './DBTypes';
+import {MediaItem, UserWithNoPassword} from './DBTypes';
 
 type MessageResponse = {
   message: string;
@@ -11,11 +11,26 @@ type ErrorResponse = MessageResponse & {
 type LoginResponse = MessageResponse & {
   token: string;
   message: string;
-  user: Omit<LoginUser, 'password'>;
+  user: UserWithNoPassword;
 };
 
 type UserResponse = MessageResponse & {
-  user: {user_id: number} | LoginUser;
+  user: UserWithNoPassword;
 };
 
-export type {MessageResponse, ErrorResponse, LoginResponse, UserResponse};
+type UserDeleteResponse = MessageResponse & {
+  user: {user_id: number};
+};
+
+type MediaResponse = MessageResponse & {
+  media: MediaItem | MediaItem[];
+};
+
+export type {
+  MessageResponse,
+  ErrorResponse,
+  LoginResponse,
+  UserResponse,
+  UserDeleteResponse,
+  MediaResponse,
+};

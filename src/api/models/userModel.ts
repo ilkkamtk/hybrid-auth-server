@@ -1,11 +1,13 @@
 import {ResultSetHeader, RowDataPacket} from 'mysql2';
-import {promisePool} from '../../utils/db';
-import {LoginUser, User} from '../../types/DBTypes';
-import {UserResponse} from '../../types/MessageTypes';
+import {promisePool} from '../../lib/db';
+import {UserWithLevel, User, UserWithNoPassword} from '../../types/DBTypes';
+import {UserDeleteResponse} from '../../types/MessageTypes';
 
-const getUserById = async (id: number): Promise<LoginUser | null> => {
+const getUserById = async (id: number): Promise<UserWithNoPassword | null> => {
   try {
-    const [rows] = await promisePool.execute<RowDataPacket[] & LoginUser[]>(
+    const [rows] = await promisePool.execute<
+      RowDataPacket[] & UserWithNoPassword[]
+    >(
       `
     SELECT
       Users.user_id,
@@ -30,9 +32,11 @@ const getUserById = async (id: number): Promise<LoginUser | null> => {
   }
 };
 
-const getAllUsers = async (): Promise<LoginUser[] | null> => {
+const getAllUsers = async (): Promise<UserWithNoPassword[] | null> => {
   try {
-    const [rows] = await promisePool.execute<RowDataPacket[] & LoginUser[]>(
+    const [rows] = await promisePool.execute<
+      RowDataPacket[] & UserWithNoPassword[]
+    >(
       `
     SELECT
       Users.user_id,
@@ -57,9 +61,9 @@ const getAllUsers = async (): Promise<LoginUser[] | null> => {
   }
 };
 
-const getUserByEmail = async (email: string): Promise<LoginUser | null> => {
+const getUserByEmail = async (email: string): Promise<UserWithLevel | null> => {
   try {
-    const [rows] = await promisePool.execute<RowDataPacket[] & LoginUser[]>(
+    const [rows] = await promisePool.execute<RowDataPacket[] & UserWithLevel[]>(
       `
     SELECT
       Users.user_id,
@@ -87,9 +91,9 @@ const getUserByEmail = async (email: string): Promise<LoginUser | null> => {
 
 const getUserByUsername = async (
   username: string
-): Promise<LoginUser | null> => {
+): Promise<UserWithLevel | null> => {
   try {
-    const [rows] = await promisePool.execute<RowDataPacket[] & LoginUser[]>(
+    const [rows] = await promisePool.execute<RowDataPacket[] & UserWithLevel[]>(
       `
     SELECT
       Users.user_id,
@@ -115,7 +119,7 @@ const getUserByUsername = async (
   }
 };
 
-const createUser = async (user: User): Promise<LoginUser | null> => {
+const createUser = async (user: User): Promise<UserWithNoPassword | null> => {
   try {
     const result = await promisePool.execute<ResultSetHeader>(
       `
@@ -140,7 +144,7 @@ const createUser = async (user: User): Promise<LoginUser | null> => {
 const modifyUser = async (
   user: User,
   id: number
-): Promise<LoginUser | null> => {
+): Promise<UserWithNoPassword | null> => {
   try {
     const sql = promisePool.format(
       `
@@ -165,7 +169,7 @@ const modifyUser = async (
   }
 };
 
-const deleteUser = async (id: number): Promise<UserResponse | null> => {
+const deleteUser = async (id: number): Promise<UserDeleteResponse | null> => {
   const connection = await promisePool.getConnection();
   try {
     await connection.beginTransaction();

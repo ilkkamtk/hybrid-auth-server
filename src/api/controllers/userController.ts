@@ -3,7 +3,7 @@
 import {NextFunction, Request, Response} from 'express';
 import CustomError from '../../classes/CustomError';
 import bcrypt from 'bcryptjs';
-import {UserResponse} from '../../types/MessageTypes';
+import {UserDeleteResponse, UserResponse} from '../../types/MessageTypes';
 import {
   createUser,
   deleteUser,
@@ -13,14 +13,14 @@ import {
   getUserByUsername,
   modifyUser,
 } from '../models/userModel';
-import {LoginUser, TokenContent, User} from '../../types/DBTypes';
+import {TokenContent, User, UserWithNoPassword} from '../../types/DBTypes';
 import {validationResult} from 'express-validator';
 
 const salt = bcrypt.genSaltSync(12);
 
 const userListGet = async (
   req: Request,
-  res: Response<LoginUser[]>,
+  res: Response<UserWithNoPassword[]>,
   next: NextFunction
 ) => {
   try {
@@ -38,7 +38,7 @@ const userListGet = async (
 
 const userGet = async (
   req: Request<{id: number}>,
-  res: Response<LoginUser>,
+  res: Response<UserWithNoPassword>,
   next: NextFunction
 ) => {
   const errors = validationResult(req);
@@ -148,7 +148,7 @@ const userPut = async (
 
 const userDelete = async (
   req: Request,
-  res: Response<UserResponse, {user: TokenContent}>,
+  res: Response<UserDeleteResponse, {user: TokenContent}>,
   next: NextFunction
 ) => {
   try {
@@ -213,7 +213,7 @@ const userPutAsAdmin = async (
 
 const userDeleteAsAdmin = async (
   req: Request<{id: string}>,
-  res: Response<UserResponse, {user: TokenContent}>,
+  res: Response<UserDeleteResponse, {user: TokenContent}>,
   next: NextFunction
 ) => {
   const errors = validationResult(req);
@@ -248,13 +248,20 @@ const userDeleteAsAdmin = async (
 
 const checkToken = async (
   req: Request,
-  res: Response<UserResponse, {user: TokenContent}>
+  res: Response<UserResponse, {user: TokenContent}>,
+  next: NextFunction
 ) => {
   const userFromToken = res.locals.user;
+  // check if user exists in database
+  const user = await getUserById(userFromToken.user_id);
+  if (!user) {
+    next(new CustomError('User not found', 404));
+    return;
+  }
 
   const message: UserResponse = {
     message: 'Token is valid',
-    user: userFromToken,
+    user: user,
   };
   res.json(message);
 };

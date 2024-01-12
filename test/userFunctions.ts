@@ -1,7 +1,7 @@
 /* eslint-disable node/no-unpublished-import */
 import {Express} from 'express';
 import request from 'supertest';
-import {LoginUser} from '../src/types/DBTypes';
+import {UserWithLevel} from '../src/types/DBTypes';
 import {
   UserResponse,
   LoginResponse,
@@ -11,8 +11,8 @@ import {
 const createUser = (
   url: string | Express,
   path: string,
-  user: Pick<LoginUser, 'username' | 'email' | 'password'>
-): Promise<LoginUser> => {
+  user: Pick<UserWithLevel, 'username' | 'email' | 'password'>
+): Promise<UserWithLevel> => {
   return new Promise((resolve, reject) => {
     request(url)
       .post(path)
@@ -27,7 +27,7 @@ const createUser = (
           if (!result.user) {
             reject(new Error('User not created'));
           }
-          const userData = result.user as LoginUser;
+          const userData = result.user as UserWithLevel;
           expect(userData.user_id).toBeGreaterThan(0);
           expect(userData.username).toBe(user.username);
           expect(userData.email).toBe(user.email);
@@ -42,7 +42,7 @@ const createUser = (
 const getAllUsers = (
   url: string | Express,
   path: string
-): Promise<LoginUser[]> => {
+): Promise<UserWithLevel[]> => {
   return new Promise((resolve, reject) => {
     request(url)
       .get(path)
@@ -50,7 +50,7 @@ const getAllUsers = (
         if (err) {
           reject(err);
         } else {
-          const users: LoginUser[] = response.body;
+          const users: UserWithLevel[] = response.body;
           users.forEach((user) => {
             expect(user).toHaveProperty('user_id');
             expect(user).toHaveProperty('username');
@@ -68,7 +68,7 @@ const getSingleUser = (
   url: string | Express,
   path: string,
   id: number
-): Promise<LoginUser> => {
+): Promise<UserWithLevel> => {
   return new Promise((resolve, reject) => {
     request(url)
       .get(`${path}/${id}`)
@@ -76,7 +76,7 @@ const getSingleUser = (
         if (err) {
           reject(err);
         } else {
-          const user: LoginUser = response.body;
+          const user: UserWithLevel = response.body;
           expect(user.user_id).toBe(id);
           expect(user).toHaveProperty('username');
           expect(user).toHaveProperty('email');
@@ -112,7 +112,7 @@ const getSingleUserError = (
 const login = (
   url: string | Express,
   path: string,
-  user: Pick<LoginUser, 'username' | 'password'>
+  user: Pick<UserWithLevel, 'username' | 'password'>
 ): Promise<string> => {
   return new Promise((resolve, reject) => {
     request(url)
@@ -129,7 +129,7 @@ const login = (
           if (!result.user) {
             reject(new Error('User not created'));
           }
-          const userData = result.user as LoginUser;
+          const userData = result.user as UserWithLevel;
           expect(userData.user_id).toBeGreaterThan(0);
           expect(userData.username).toBe(user.username);
           expect(userData.email).toBeDefined();
@@ -145,7 +145,7 @@ const modifyUser = (
   url: string | Express,
   path: string,
   token: string,
-  user: Pick<LoginUser, 'username' | 'email'>
+  user: Pick<UserWithLevel, 'username' | 'email'>
 ) => {
   return new Promise((resolve, reject) => {
     request(url)
@@ -162,7 +162,7 @@ const modifyUser = (
           if (!result.user) {
             reject(new Error('User not created'));
           }
-          const userData = result.user as LoginUser;
+          const userData = result.user as UserWithLevel;
           expect(userData.user_id).toBeGreaterThan(0);
           expect(userData.username).toBe(user.username);
           expect(userData.email).toBe(user.email);
@@ -186,7 +186,7 @@ const deleteUser = (url: string | Express, path: string, token: string) => {
           const result: UserResponse = response.body;
           expect(result).toHaveProperty('message');
           expect(result).toHaveProperty('user');
-          const userData = result.user as LoginUser;
+          const userData = result.user as UserWithLevel;
           expect(userData.user_id).toBeGreaterThan(0);
           resolve(userData);
         }

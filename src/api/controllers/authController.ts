@@ -4,7 +4,7 @@ import {NextFunction, Request, Response} from 'express';
 import CustomError from '../../classes/CustomError';
 import {LoginResponse} from '../../types/MessageTypes';
 import {getUserByUsername} from '../models/userModel';
-import {LoginUser, TokenContent} from '../../types/DBTypes';
+import {UserWithLevel, TokenContent} from '../../types/DBTypes';
 import {validationResult} from 'express-validator';
 
 const login = async (
@@ -27,12 +27,12 @@ const login = async (
     const {username, password} = req.body;
     const user = await getUserByUsername(username);
     if (!user) {
-      next(new CustomError('Incorrect username/password', 200));
+      next(new CustomError('Incorrect username/password', 403));
       return;
     }
 
     if (user.password && !bcrypt.compareSync(password, user.password)) {
-      next(new CustomError('Incorrect username/password', 200));
+      next(new CustomError('Incorrect username/password', 403));
       return;
     }
 
@@ -42,7 +42,7 @@ const login = async (
     }
 
     // delete user.password before sending data back to client
-    const outUser: Omit<LoginUser, 'password'> = {
+    const outUser: Omit<UserWithLevel, 'password'> = {
       user_id: user.user_id,
       username: user.username,
       email: user.email,

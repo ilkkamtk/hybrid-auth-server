@@ -1,6 +1,6 @@
 /* eslint-disable node/no-unpublished-import */
 import app from '../src/app';
-import {LoginUser} from '../src/types/DBTypes';
+import {UserWithLevel} from '../src/types/DBTypes';
 import {getFound, getNotFound} from './serverFunctions';
 import {
   createUser,
@@ -28,14 +28,14 @@ describe('GET /api/v1', () => {
   });
 
   // test user
-  const testuser: Pick<LoginUser, 'username' | 'email' | 'password'> = {
+  const testuser: Pick<UserWithLevel, 'username' | 'email' | 'password'> = {
     username: 'testuser' + randomstring.generate(5),
     email: randomstring.generate(5) + '@test.com',
     password: 'testpassword',
   };
 
   // create a user
-  let user: LoginUser;
+  let user: UserWithLevel;
   it('should create a user', async () => {
     user = await createUser(app, userpath, testuser);
   });
@@ -58,7 +58,7 @@ describe('GET /api/v1', () => {
   });
 
   // test modify user
-  const modifieduser: Pick<LoginUser, 'username' | 'email'> = {
+  const modifieduser: Pick<UserWithLevel, 'username' | 'email'> = {
     username: 'modifieduser' + randomstring.generate(5),
     email: randomstring.generate(5) + '@test.com',
   };
