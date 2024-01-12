@@ -2,7 +2,7 @@ import express from 'express';
 
 import userRoute from './routes/userRoute';
 import authRoute from './routes/authRoute';
-import {MessageResponse} from '../types/MessageTypes';
+import {MessageResponse} from '@sharedTypes/MessageTypes';
 const router = express.Router();
 
 router.get<{}, MessageResponse>('/', (req, res) => {
