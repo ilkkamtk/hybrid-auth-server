@@ -10,13 +10,13 @@ import {validationResult} from 'express-validator';
 const login = async (
   req: Request<{}, {}, {username: string; password: string}>,
   res: Response<LoginResponse>,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const messages: string = errors
       .array()
-      .map((error) => `${error.msg}: ${error.param}`)
+      .map((error) => `${error.msg}: ${error.type === 'field' && error.path}`)
       .join(', ');
     console.log('login validation', messages);
     next(new CustomError(messages, 400));
