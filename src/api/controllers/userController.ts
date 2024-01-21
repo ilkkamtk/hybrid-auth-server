@@ -166,7 +166,7 @@ const userDelete = async (
       next(new CustomError('User not found', 404));
       return;
     }
-
+    console.log(result);
     res.json(result);
   } catch (error) {
     next(new CustomError((error as Error).message, 500));

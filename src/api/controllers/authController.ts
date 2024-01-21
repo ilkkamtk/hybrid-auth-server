@@ -12,13 +12,13 @@ const login = async (
   res: Response<LoginResponse>,
   next: NextFunction,
 ) => {
+  console.log(req.body);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const messages: string = errors
       .array()
       .map((error) => `${error.msg}: ${error.type === 'field' && error.path}`)
       .join(', ');
-    console.log('login validation', messages);
     next(new CustomError(messages, 400));
     return;
   }

@@ -84,7 +84,7 @@ router.post(
   body('username').notEmpty().isString().escape().trim().isLength({min: 3}),
   body('password').notEmpty().isString().escape().trim().isLength({min: 5}),
   body('email').isEmail(),
-  userPost
+  userPost,
 );
 
 /**
@@ -134,7 +134,7 @@ router.put(
   body('username').optional().isString().escape().trim().isLength({min: 3}),
   body('password').optional().isString().escape().trim().isLength({min: 5}),
   body('email').optional().isEmail(),
-  userPut
+  userPut,
 );
 
 /**
@@ -267,7 +267,7 @@ router
     body('username').optional().isString().escape().trim().isLength({min: 3}),
     body('password').optional().isString().escape().trim().isLength({min: 5}),
     body('email').optional().isEmail(),
-    userPutAsAdmin
+    userPutAsAdmin,
   );
 
 /**
@@ -349,7 +349,7 @@ router.get('/email/:email', param('email').isEmail(), checkEmailExists);
 router.get(
   '/username/:username',
   param('username').isString().escape(),
-  checkUsernameExists
+  checkUsernameExists,
 );
 
 export default router;
