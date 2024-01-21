@@ -44,7 +44,7 @@ router.post(
   '/login',
   body('username').isString().notEmpty(),
   body('password').isString().notEmpty(),
-  login
+  login,
 );
 
 export default router;
