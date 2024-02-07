@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/src/index.js",
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "node dist/hybrid-auth-server/src/index.js",
     "dev": "nodemon src/index.ts",
     "build": "tsc",
     "postbuild": "npm run apidoc",
