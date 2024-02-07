@@ -1,17 +1,17 @@
 /* eslint-disable node/no-unpublished-import */
 import {Express} from 'express';
 import request from 'supertest';
-import {UserWithLevel} from '../src/types/DBTypes';
+import {UserWithLevel} from '@sharedTypes/DBTypes';
 import {
   UserResponse,
   LoginResponse,
   MessageResponse,
-} from '../src/types/MessageTypes';
+} from '@sharedTypes/MessageTypes';
 
 const createUser = (
   url: string | Express,
   path: string,
-  user: Pick<UserWithLevel, 'username' | 'email' | 'password'>
+  user: Pick<UserWithLevel, 'username' | 'email' | 'password'>,
 ): Promise<UserWithLevel> => {
   return new Promise((resolve, reject) => {
     request(url)
@@ -41,7 +41,7 @@ const createUser = (
 
 const getAllUsers = (
   url: string | Express,
-  path: string
+  path: string,
 ): Promise<UserWithLevel[]> => {
   return new Promise((resolve, reject) => {
     request(url)
@@ -67,7 +67,7 @@ const getAllUsers = (
 const getSingleUser = (
   url: string | Express,
   path: string,
-  id: number
+  id: number,
 ): Promise<UserWithLevel> => {
   return new Promise((resolve, reject) => {
     request(url)
@@ -91,7 +91,7 @@ const getSingleUser = (
 const getSingleUserError = (
   url: string | Express,
   path: string,
-  id: number
+  id: number,
 ) => {
   return new Promise((resolve, reject) => {
     request(url)
@@ -112,7 +112,7 @@ const getSingleUserError = (
 const login = (
   url: string | Express,
   path: string,
-  user: Pick<UserWithLevel, 'username' | 'password'>
+  user: Pick<UserWithLevel, 'username' | 'password'>,
 ): Promise<string> => {
   return new Promise((resolve, reject) => {
     request(url)
@@ -145,7 +145,7 @@ const modifyUser = (
   url: string | Express,
   path: string,
   token: string,
-  user: Pick<UserWithLevel, 'username' | 'email'>
+  user: Pick<UserWithLevel, 'username' | 'email'>,
 ) => {
   return new Promise((resolve, reject) => {
     request(url)
