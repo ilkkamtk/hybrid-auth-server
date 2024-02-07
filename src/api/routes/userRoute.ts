@@ -297,7 +297,7 @@ router
   .delete(authenticate, param('id').isNumeric(), userDeleteAsAdmin);
 
 /**
- * @api {get} /users/email Check Email
+ * @api {get} /users/:email Check Email
  * @apiName CheckEmail
  * @apiGroup User
  * @apiPermission admin
@@ -323,7 +323,7 @@ router
 router.get('/email/:email', param('email').isEmail(), checkEmailExists);
 
 /**
- * @api {get} /users/username Check Username
+ * @api {get} /users/:username Check Username
  * @apiName CheckUsername
  * @apiGroup User
  * @apiPermission admin

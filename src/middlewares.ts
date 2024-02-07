@@ -15,7 +15,7 @@ const errorHandler = (
   err: CustomError,
   req: Request,
   res: Response<ErrorResponse>,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   console.error('errorHandler', err);
   res.status(err.status || 500);
@@ -28,7 +28,7 @@ const errorHandler = (
 const authenticate = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const bearer = req.headers.authorization;
@@ -46,8 +46,10 @@ const authenticate = async (
 
     const userFromToken = jwt.verify(
       token,
-      process.env.JWT_SECRET as string
+      process.env.JWT_SECRET as string,
     ) as TokenContent;
+
+    console.log('userFromToken', userFromToken);
 
     const user = await getUserById(userFromToken.user_id);
 

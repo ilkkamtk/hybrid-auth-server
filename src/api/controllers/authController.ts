@@ -55,6 +55,8 @@ const login = async (
       level_name: user.level_name,
     };
 
+    console.log('tokenContent', tokenContent);
+
     const token = jwt.sign(tokenContent, process.env.JWT_SECRET);
 
     const message: LoginResponse = {
