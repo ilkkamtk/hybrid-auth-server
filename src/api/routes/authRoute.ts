@@ -13,7 +13,7 @@ import {body} from 'express-validator';
  *
  * @apiParamExample {json} Request-Example:
  *     {
- *       "username": "testi",
+ *       "username": "test_user",
  *       "password": "12345"
  *     }
  *
