@@ -14,7 +14,7 @@ import {body} from 'express-validator';
  * @apiParamExample {json} Request-Example:
  *     {
  *       "username": "test_user",
- *       "password": "12345"
+ *       "password": "123456"
  *     }
  *
  * @apiSuccess {String} message Success message.
