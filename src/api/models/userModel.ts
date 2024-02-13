@@ -79,7 +79,7 @@ const getUserByEmail = async (email: string): Promise<UserWithLevel | null> => {
   `,
       [email],
     );
-    console.log(rows);
+    console.log(promisePool.query);
     if (rows.length === 0) {
       return null;
     }
