@@ -16,7 +16,7 @@ app.use(
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", "'unsafe-eval'"],
     },
-  })
+  }),
 );
 app.use(cors());
 app.use(express.json());

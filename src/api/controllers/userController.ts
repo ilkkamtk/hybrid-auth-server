@@ -294,6 +294,7 @@ const checkEmailExists = async (
   }
 
   try {
+    console.log('test email check', req.params.email);
     const user = await getUserByEmail(req.params.email);
     console.log(user);
     res.json({available: user ? false : true});
