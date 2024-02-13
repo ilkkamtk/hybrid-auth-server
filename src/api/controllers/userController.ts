@@ -296,7 +296,6 @@ const checkEmailExists = async (
   try {
     console.log('test email check', req.params.email);
     const user = await getUserByEmail(req.params.email);
-    console.log(user);
     res.json({available: user ? false : true});
   } catch (error) {
     next(new CustomError((error as Error).message, 500));
