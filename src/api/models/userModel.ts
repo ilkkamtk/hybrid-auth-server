@@ -63,9 +63,9 @@ const getAllUsers = async (): Promise<UserWithNoPassword[] | null> => {
 
 const getUserByEmail = async (email: string): Promise<UserWithLevel | null> => {
   try {
-    const [rows] = await promisePool.execute<RowDataPacket[] & UserWithLevel[]>(
+    const sql = promisePool.format(
       `
-    SELECT
+      SELECT
       Users.user_id,
       Users.username,
       Users.password,
@@ -79,7 +79,10 @@ const getUserByEmail = async (email: string): Promise<UserWithLevel | null> => {
   `,
       [email],
     );
-    console.log(promisePool.query);
+    const [rows] = await promisePool.execute<RowDataPacket[] & UserWithLevel[]>(
+      sql,
+    );
+    console.log(sql);
     if (rows.length === 0) {
       return null;
     }
