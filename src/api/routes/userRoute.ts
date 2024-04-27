@@ -323,10 +323,9 @@ router
 router.get('/email/:email', param('email').isEmail(), checkEmailExists);
 
 /**
- * @api {get} /users/:username Check Username
+ * @api {get} /users/usename/:username Check Username
  * @apiName CheckUsername
  * @apiGroup User
- * @apiPermission admin
  *
  * @apiParam {String} username User's username.
  *
