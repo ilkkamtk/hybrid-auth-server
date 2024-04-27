@@ -297,14 +297,12 @@ router
   .delete(authenticate, param('id').isNumeric(), userDeleteAsAdmin);
 
 /**
- * @api {get} /users/:email Check Email
+ * @api {get} /users/email/:email Check Email
  * @apiName CheckEmail
  * @apiGroup User
- * @apiPermission admin
  *
  * @apiParam {String} email User's email.
  *
- * @apiSuccess {String} message Success message.
  * @apiSuccess {Boolean} exists True if email exists, false if not.
  *
  * @apiSuccessExample {json} Success-Response:
@@ -312,12 +310,6 @@ router
  *   {
  *    "available": "true"
  *  }
- *
- * @apiErrorExample {json} Error-Response:
- *    HTTP/1.1 400 Bad Request
- *  {
- *   "message": "Invalid email"
- * }
  *
  */
 router.get('/email/:email', param('email').isEmail(), checkEmailExists);
@@ -329,7 +321,6 @@ router.get('/email/:email', param('email').isEmail(), checkEmailExists);
  *
  * @apiParam {String} username User's username.
  *
- * @apiSuccess {String} message Success message.
  * @apiSuccess {Boolean} exists True if username exists, false if not.
  *
  * @apiSuccessExample {json} Success-Response:
@@ -337,12 +328,6 @@ router.get('/email/:email', param('email').isEmail(), checkEmailExists);
  *   {
  *    "available": "true"
  *  }
- *
- * @apiErrorExample {json} Error-Response:
- *    HTTP/1.1 400 Bad Request
- *  {
- *   "message": "Invalid username"
- * }
  *
  */
 router.get(
