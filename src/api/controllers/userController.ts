@@ -100,7 +100,7 @@ const userPost = async (
     };
     res.json(response);
   } catch (error) {
-    next(new CustomError('Duplicate entry', 200));
+    next(new CustomError('Duplicate entry', 400));
   }
 };
 
