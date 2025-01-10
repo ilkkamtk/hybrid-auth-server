@@ -1,11 +1,11 @@
-import express from 'express';
+import express, {Request, Response} from 'express';
 
 import userRoute from './routes/userRoute';
 import authRoute from './routes/authRoute';
-import {MessageResponse} from '@sharedTypes/MessageTypes';
+import {MessageResponse} from 'hybrid-types/MessageTypes';
 const router = express.Router();
 
-router.get<{}, MessageResponse>('/', (req, res) => {
+router.get('/', (req: Request, res: Response<MessageResponse>) => {
   res.json({
     message: 'routes: users, auth',
   });

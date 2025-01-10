@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {NextFunction, Request, Response} from 'express';
-import {ErrorResponse} from '@sharedTypes/MessageTypes';
+import {ErrorResponse} from 'hybrid-types/MessageTypes';
 import CustomError from './classes/CustomError';
 import jwt from 'jsonwebtoken';
 import {getUserById} from './api/models/userModel';
-import {TokenContent} from '@sharedTypes/DBTypes';
+import {TokenContent} from 'hybrid-types/DBTypes';
+import {validationResult} from 'express-validator';
 
 const notFound = (req: Request, res: Response, next: NextFunction) => {
   const error = new CustomError(`🔍 - Not Found - ${req.originalUrl}`, 404);
@@ -66,4 +67,18 @@ const authenticate = async (
   }
 };
 
-export {notFound, errorHandler, authenticate};
+const validationErrors = (req: Request, _res: Response, next: NextFunction) => {
+  console.log(req.body);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const messages: string = errors
+      .array()
+      .map((error) => `${error.msg}: ${error.type}`)
+      .join(', ');
+    next(new CustomError(messages, 400));
+    return;
+  }
+  next();
+};
+
+export {notFound, errorHandler, authenticate, validationErrors};

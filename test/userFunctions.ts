@@ -1,12 +1,12 @@
 /* eslint-disable node/no-unpublished-import */
 import {Express} from 'express';
 import request from 'supertest';
-import {UserWithLevel} from '@sharedTypes/DBTypes';
+import {UserWithLevel} from 'hybrid-types/DBTypes';
 import {
   UserResponse,
   LoginResponse,
   MessageResponse,
-} from '@sharedTypes/MessageTypes';
+} from 'hybrid-types/MessageTypes';
 
 const createUser = (
   url: string | Express,

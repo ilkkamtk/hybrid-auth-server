@@ -1,181 +1,123 @@
 import {ResultSetHeader, RowDataPacket} from 'mysql2';
 import {promisePool} from '../../lib/db';
-import {UserWithLevel, User, UserWithNoPassword} from '@sharedTypes/DBTypes';
-import {UserDeleteResponse} from '@sharedTypes/MessageTypes';
+import {UserWithLevel, User, UserWithNoPassword} from 'hybrid-types/DBTypes';
+import {UserDeleteResponse} from 'hybrid-types/MessageTypes';
+import CustomError from '../../classes/CustomError';
 
-const getUserById = async (id: number): Promise<UserWithNoPassword | null> => {
-  try {
-    const [rows] = await promisePool.execute<
-      RowDataPacket[] & UserWithNoPassword[]
-    >(
-      `
-    SELECT
-      Users.user_id,
-      Users.username,
-      Users.email,
-      Users.created_at,
-      UserLevels.level_name
-    FROM Users
-    JOIN UserLevels
-    ON Users.user_level_id = UserLevels.level_id
-    WHERE Users.user_id = ?
-  `,
-      [id],
-    );
-    if (rows.length === 0) {
-      return null;
-    }
-    return rows[0];
-  } catch (e) {
-    console.error('getUserById error', (e as Error).message);
-    throw new Error((e as Error).message);
+const getUserById = async (id: number): Promise<UserWithNoPassword> => {
+  const [rows] = await promisePool.execute<
+    RowDataPacket[] & UserWithNoPassword[]
+  >(
+    `SELECT Users.user_id, Users.username, Users.email, Users.created_at, UserLevels.level_name
+     FROM Users
+     JOIN UserLevels ON Users.user_level_id = UserLevels.level_id
+     WHERE Users.user_id = ?`,
+    [id],
+  );
+  if (rows.length === 0) {
+    throw new CustomError('User not found', 404);
   }
+  return rows[0];
 };
 
-const getAllUsers = async (): Promise<UserWithNoPassword[] | null> => {
-  try {
-    const [rows] = await promisePool.execute<
-      RowDataPacket[] & UserWithNoPassword[]
-    >(
-      `
-    SELECT
-      Users.user_id,
-      Users.username,
-      Users.email,
-      Users.created_at,
-      UserLevels.level_name
-    FROM Users
-    JOIN UserLevels
-    ON Users.user_level_id = UserLevels.level_id
-  `,
-    );
-
-    if (rows.length === 0) {
-      return null;
-    }
-
-    return rows;
-  } catch (e) {
-    console.error('getAllUsers error', (e as Error).message);
-    throw new Error((e as Error).message);
-  }
+const getAllUsers = async (): Promise<UserWithNoPassword[]> => {
+  const [rows] = await promisePool.execute<
+    RowDataPacket[] & UserWithNoPassword[]
+  >(
+    `SELECT Users.user_id, Users.username, Users.email, Users.created_at, UserLevels.level_name
+     FROM Users
+     JOIN UserLevels ON Users.user_level_id = UserLevels.level_id`,
+  );
+  return rows; // Return empty array if no users found
 };
 
-const getUserByEmail = async (email: string): Promise<UserWithLevel | null> => {
-  try {
-    const sql = promisePool.format(
-      `
-      SELECT
-      Users.user_id,
-      Users.username,
-      Users.password,
-      Users.email,
-      Users.created_at,
-      UserLevels.level_name
-    FROM Users
-    JOIN UserLevels
-    ON Users.user_level_id = UserLevels.level_id
-    WHERE Users.email = ?
-  `,
-      [email],
-    );
-    const [rows] = await promisePool.execute<RowDataPacket[] & UserWithLevel[]>(
-      sql,
-    );
-    console.log(sql);
-    if (rows.length === 0) {
-      return null;
-    }
-    return rows[0];
-  } catch (e) {
-    console.error('getUserByEmail error', (e as Error).message);
-    throw new Error((e as Error).message);
+const getUserByEmail = async (email: string): Promise<UserWithLevel> => {
+  const [rows] = await promisePool.execute<RowDataPacket[] & UserWithLevel[]>(
+    `SELECT Users.user_id, Users.username, Users.password, Users.email, Users.created_at, UserLevels.level_name
+     FROM Users
+     JOIN UserLevels ON Users.user_level_id = UserLevels.level_id
+     WHERE Users.email = ?`,
+    [email],
+  );
+  if (rows.length === 0) {
+    throw new CustomError('User not found', 404);
   }
+  return rows[0];
 };
 
-const getUserByUsername = async (
-  username: string,
-): Promise<UserWithLevel | null> => {
-  try {
-    const [rows] = await promisePool.execute<RowDataPacket[] & UserWithLevel[]>(
-      `
-    SELECT
-      Users.user_id,
-      Users.username,
-      Users.password,
-      Users.email,
-      Users.created_at,
-      UserLevels.level_name
-    FROM Users
-    JOIN UserLevels
-    ON Users.user_level_id = UserLevels.level_id
-    WHERE Users.username = ?
-  `,
-      [username],
-    );
-    if (rows.length === 0) {
-      return null;
-    }
-    return rows[0];
-  } catch (e) {
-    console.error('getUserByUsername error', (e as Error).message);
-    throw new Error((e as Error).message);
+const getUserByUsername = async (username: string): Promise<UserWithLevel> => {
+  const [rows] = await promisePool.execute<RowDataPacket[] & UserWithLevel[]>(
+    `SELECT Users.user_id, Users.username, Users.password, Users.email, Users.created_at, UserLevels.level_name
+     FROM Users
+     JOIN UserLevels ON Users.user_level_id = UserLevels.level_id
+     WHERE Users.username = ?`,
+    [username],
+  );
+  if (rows.length === 0) {
+    throw new CustomError('User not found', 404);
   }
+  return rows[0];
 };
 
 const createUser = async (
   user: Pick<User, 'username' | 'password' | 'email'>,
-): Promise<UserWithNoPassword | null> => {
-  try {
-    const result = await promisePool.execute<ResultSetHeader>(
-      `
-    INSERT INTO Users (username, password, email, user_level_id)
-    VALUES (?, ?, ?, ?)
-  `,
-      [user.username, user.password, user.email, 2],
-    );
+  userLevelId = 2,
+): Promise<UserWithNoPassword> => {
+  const sql = `INSERT INTO Users (username, password, email, user_level_id)
+       VALUES (?, ?, ?, ?)`;
+  const stmt = promisePool.format(sql, [
+    user.username,
+    user.password,
+    user.email,
+    userLevelId,
+  ]);
+  const [result] = await promisePool.execute<ResultSetHeader>(stmt);
 
-    if (result[0].affectedRows === 0) {
-      return null;
-    }
-
-    const newUser = await getUserById(result[0].insertId);
-    return newUser;
-  } catch (e) {
-    console.error('createUser error', (e as Error).message);
-    throw new Error((e as Error).message);
+  if (result.affectedRows === 0) {
+    throw new CustomError('Failed to create user', 500);
   }
+
+  return await getUserById(result.insertId);
 };
 
 const modifyUser = async (
-  user: User,
+  user: Partial<User>,
   id: number,
-): Promise<UserWithNoPassword | null> => {
+): Promise<UserWithNoPassword> => {
+  const connection = await promisePool.getConnection();
   try {
-    const sql = promisePool.format(
-      `
-      UPDATE Users
-      SET ?
-      WHERE user_id = ?
-      `,
-      [user, id],
-    );
+    await connection.beginTransaction();
 
-    const result = await promisePool.execute<ResultSetHeader>(sql);
+    const allowedFields = ['username', 'email', 'password', 'user_level_id'];
+    const updates = Object.entries(user)
+      .filter(([key]) => allowedFields.includes(key))
+      .map(([key, value]) => `${key} = ?`);
+    const values = Object.entries(user)
+      .filter(([key]) => allowedFields.includes(key))
+      .map(([, value]) => value);
 
-    if (result[0].affectedRows === 0) {
-      return null;
+    if (updates.length === 0) {
+      throw new CustomError('No valid fields to update', 400);
     }
 
-    const newUser = await getUserById(id);
-    return newUser;
-  } catch (e) {
-    console.error('modifyUser error', (e as Error).message);
-    throw new Error((e as Error).message);
+    const [result] = await connection.execute<ResultSetHeader>(
+      `UPDATE Users SET ${updates.join(', ')} WHERE user_id = ?`,
+      [...values, id],
+    );
+
+    if (result.affectedRows === 0) {
+      throw new CustomError('User not found', 404);
+    }
+
+    const updatedUser = await getUserById(id);
+    await connection.commit();
+    return updatedUser;
+  } finally {
+    connection.release();
   }
 };
 
-const deleteUser = async (id: number): Promise<UserDeleteResponse | null> => {
+const deleteUser = async (id: number): Promise<UserDeleteResponse> => {
   const connection = await promisePool.getConnection();
   try {
     await connection.beginTransaction();
@@ -207,14 +149,11 @@ const deleteUser = async (id: number): Promise<UserDeleteResponse | null> => {
     await connection.commit();
 
     if (result.affectedRows === 0) {
-      return null;
+      throw new CustomError('User not found', 404);
     }
 
     console.log('result', result);
     return {message: 'User deleted', user: {user_id: id}};
-  } catch (e) {
-    await connection.rollback();
-    throw e;
   } finally {
     connection.release();
   }
