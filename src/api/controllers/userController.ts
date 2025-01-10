@@ -3,7 +3,7 @@
 import {NextFunction, Request, Response} from 'express';
 import CustomError from '../../classes/CustomError';
 import bcrypt from 'bcryptjs';
-import {UserDeleteResponse, UserResponse} from '@sharedTypes/MessageTypes';
+import {UserDeleteResponse, UserResponse} from 'hybrid-types/MessageTypes';
 import {
   createUser,
   deleteUser,
@@ -13,8 +13,7 @@ import {
   getUserByUsername,
   modifyUser,
 } from '../models/userModel';
-import {TokenContent, User, UserWithNoPassword} from '@sharedTypes/DBTypes';
-import {validationResult} from 'express-validator';
+import {TokenContent, User, UserWithNoPassword} from 'hybrid-types/DBTypes';
 
 const salt = bcrypt.genSaltSync(12);
 
@@ -25,42 +24,22 @@ const userListGet = async (
 ) => {
   try {
     const users = await getAllUsers();
-
-    if (users === null) {
-      next(new CustomError('Users not found', 404));
-      return;
-    }
     res.json(users);
   } catch (error) {
-    next(new CustomError((error as Error).message, 500));
+    next(error);
   }
 };
 
 const userGet = async (
-  req: Request<{id: number}>,
+  req: Request<{id: string}>,
   res: Response<UserWithNoPassword>,
   next: NextFunction,
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages: string = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.type === 'field' && error.path}`)
-      .join(', ');
-    console.log('login validation', messages);
-    next(new CustomError(messages, 400));
-    return;
-  }
-
   try {
-    const user = await getUserById(req.params.id);
-    if (user === null) {
-      next(new CustomError('User not found', 404));
-      return;
-    }
+    const user = await getUserById(Number(req.params.id));
     res.json(user);
   } catch (error) {
-    next(new CustomError((error as Error).message, 500));
+    next(error);
   }
 };
 
@@ -69,19 +48,6 @@ const userPost = async (
   res: Response<UserResponse>,
   next: NextFunction,
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages: string = errors
-      .array()
-      .map(
-        (error) => error.type === 'field' && `${error.path}: ${error.location}`,
-      )
-      .join(', ');
-    console.log('userPost validation', messages);
-    next(new CustomError(messages, 400));
-    return;
-  }
-
   try {
     const user = req.body;
     user.password = await bcrypt.hash(user.password, salt);
@@ -109,19 +75,6 @@ const userPut = async (
   res: Response<UserResponse, {user: TokenContent}>,
   next: NextFunction,
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages: string = errors
-      .array()
-      .map(
-        (error) => error.type === 'field' && `${error.path}: ${error.location}`,
-      )
-      .join(', ');
-    console.log('userPut validation', messages);
-    next(new CustomError(messages, 400));
-    return;
-  }
-
   try {
     const userFromToken = res.locals.user;
 
@@ -147,7 +100,7 @@ const userPut = async (
     };
     res.json(response);
   } catch (error) {
-    next(new CustomError((error as Error).message, 500));
+    next(error);
   }
 };
 
@@ -169,7 +122,7 @@ const userDelete = async (
     console.log(result);
     res.json(result);
   } catch (error) {
-    next(new CustomError((error as Error).message, 500));
+    next(error);
   }
 };
 
@@ -178,19 +131,6 @@ const userPutAsAdmin = async (
   res: Response<UserResponse, {user: TokenContent}>,
   next: NextFunction,
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages: string = errors
-      .array()
-      .map(
-        (error) => error.type === 'field' && `${error.path}: ${error.location}`,
-      )
-      .join(', ');
-    console.log('userPutAsAdmin validation', messages);
-    next(new CustomError(messages, 400));
-    return;
-  }
-
   try {
     if (res.locals.user.level_name !== 'Admin') {
       next(new CustomError('You are not authorized to do this', 401));
@@ -214,7 +154,7 @@ const userPutAsAdmin = async (
     };
     res.json(response);
   } catch (error) {
-    next(new CustomError((error as Error).message, 500));
+    next(error);
   }
 };
 
@@ -223,19 +163,6 @@ const userDeleteAsAdmin = async (
   res: Response<UserDeleteResponse, {user: TokenContent}>,
   next: NextFunction,
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages: string = errors
-      .array()
-      .map(
-        (error) => error.type === 'field' && `${error.path}: ${error.location}`,
-      )
-      .join(', ');
-    console.log('userDeleteAsAdmin validation', messages);
-    next(new CustomError(messages, 400));
-    return;
-  }
-
   try {
     if (res.locals.user.level_name !== 'Admin') {
       next(new CustomError('You are not authorized to do this', 401));
@@ -251,7 +178,7 @@ const userDeleteAsAdmin = async (
 
     res.json(result);
   } catch (error) {
-    next(new CustomError((error as Error).message, 500));
+    next(error);
   }
 };
 
@@ -280,25 +207,12 @@ const checkEmailExists = async (
   res: Response<{available: boolean}>,
   next: NextFunction,
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages: string = errors
-      .array()
-      .map(
-        (error) => error.type === 'field' && `${error.path}: ${error.location}`,
-      )
-      .join(', ');
-    console.log('checkEmailExists validation', messages);
-    next(new CustomError(messages, 400));
-    return;
-  }
-
   try {
     console.log('test email check', req.params.email);
     const user = await getUserByEmail(req.params.email);
     res.json({available: user ? false : true});
   } catch (error) {
-    next(new CustomError((error as Error).message, 500));
+    next(error);
   }
 };
 
@@ -307,24 +221,11 @@ const checkUsernameExists = async (
   res: Response<{available: boolean}>,
   next: NextFunction,
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages: string = errors
-      .array()
-      .map(
-        (error) => error.type === 'field' && `${error.path}: ${error.location}`,
-      )
-      .join(', ');
-    console.log('checkUsernameExists validation', messages);
-    next(new CustomError(messages, 400));
-    return;
-  }
-
   try {
     const user = await getUserByUsername(req.params.username);
     res.json({available: user ? false : true});
   } catch (error) {
-    next(new CustomError((error as Error).message, 500));
+    next(error);
   }
 };
 
