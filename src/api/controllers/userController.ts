@@ -213,7 +213,7 @@ const checkEmailExists = async (
   try {
     console.log('test email check', req.params.email);
     const user = await getUserByEmail(req.params.email);
-    res.json({available: user && false});
+    res.json({available: user ? false : true});
   } catch {
     res.json({available: true});
   }
@@ -225,7 +225,7 @@ const checkUsernameExists = async (
 ) => {
   try {
     const user = await getUserByUsername(req.params.username);
-    res.json({available: user && false});
+    res.json({available: user ? false : true});
   } catch {
     res.json({available: true});
   }

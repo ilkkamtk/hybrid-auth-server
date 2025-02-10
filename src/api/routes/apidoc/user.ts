@@ -249,7 +249,7 @@
  *
  * @apiParam {String} email User's email.
  *
- * @apiSuccess {Boolean} exists True if email exists, false if not.
+ * @apiSuccess {Boolean} exists False if email exists, true if not.
  *
  * @apiSuccessExample {json} Success-Response:
  *    HTTP/1.1 200 OK
@@ -265,7 +265,7 @@
  *
  * @apiParam {String} username User's username.
  *
- * @apiSuccess {Boolean} exists True if username exists, false if not.
+ * @apiSuccess {Boolean} exists False if username exists, true if not.
  *
  * @apiSuccessExample {json} Success-Response:
  *    HTTP/1.1 200 OK
