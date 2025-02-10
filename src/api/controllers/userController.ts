@@ -3,7 +3,11 @@
 import {NextFunction, Request, Response} from 'express';
 import CustomError from '../../classes/CustomError';
 import bcrypt from 'bcryptjs';
-import {UserDeleteResponse, UserResponse} from 'hybrid-types/MessageTypes';
+import {
+  AvailableResponse,
+  UserDeleteResponse,
+  UserResponse,
+} from 'hybrid-types/MessageTypes';
 import {
   createUser,
   deleteUser,
@@ -65,7 +69,7 @@ const userPost = async (
       user: newUser,
     };
     res.json(response);
-  } catch (error) {
+  } catch {
     next(new CustomError('Duplicate entry', 400));
   }
 };
@@ -204,28 +208,26 @@ const checkToken = async (
 
 const checkEmailExists = async (
   req: Request<{email: string}>,
-  res: Response<{available: boolean}>,
-  next: NextFunction,
+  res: Response<AvailableResponse>,
 ) => {
   try {
     console.log('test email check', req.params.email);
     const user = await getUserByEmail(req.params.email);
-    res.json({available: user ? false : true});
-  } catch (error) {
-    next(error);
+    res.json({available: user && false});
+  } catch {
+    res.json({available: true});
   }
 };
 
 const checkUsernameExists = async (
   req: Request<{username: string}>,
-  res: Response<{available: boolean}>,
-  next: NextFunction,
+  res: Response<AvailableResponse>,
 ) => {
   try {
     const user = await getUserByUsername(req.params.username);
-    res.json({available: user ? false : true});
-  } catch (error) {
-    next(error);
+    res.json({available: user && false});
+  } catch {
+    res.json({available: true});
   }
 };
 
